@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.kr328.gradle.golang"
-version = "1.0.1"
+version = "1.0.2"
 
 dependencies {
     val agp = "7.3.0"

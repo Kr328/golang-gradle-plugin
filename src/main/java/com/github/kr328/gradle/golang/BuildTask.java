@@ -106,10 +106,6 @@ public abstract class BuildTask extends DefaultTask {
         if (variant.getFlags() != null) {
             commands.addAll(variant.getFlags());
         }
-        if (variant.isStrip()) {
-            commands.add("-ldflags");
-            commands.add("-s -w");
-        }
         if (variant.getPackageName() != null) {
             commands.add(variant.getPackageName());
         }

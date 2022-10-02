@@ -49,7 +49,6 @@ public class Variant implements Serializable {
     private List<String> tags;
     @Nullable
     private List<String> flags;
-    private boolean strip;
 
     public Variant(String name) {
         this.name = name;
