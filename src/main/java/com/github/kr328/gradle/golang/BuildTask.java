@@ -75,8 +75,14 @@ public abstract class BuildTask extends DefaultTask {
             environment.put("CGO_ENABLED", "0");
         }
 
+        final String outputPath;
+        if (variant.getFileName() != null) {
+            outputPath = String.join(File.separator, outputDir.getAbsolutePath(), variant.getFileName());
+        } else {
+            outputPath = outputDir.getAbsolutePath() + File.separator;
+        }
         final ArrayList<String> commands = new ArrayList<>(
-                List.of("go", "build", "-trimpath", "-o", outputDir.getAbsolutePath())
+                List.of("go", "build", "-trimpath", "-o", outputPath)
         );
         if (variant.getBuildMode() != null) {
             switch (variant.getBuildMode()) {
@@ -84,15 +90,21 @@ public abstract class BuildTask extends DefaultTask {
                     commands.add("-buildmode");
                     commands.add("exe");
                     break;
-                case Library:
+                case Shared:
                     commands.add("-buildmode");
-                    commands.add("c-library");
+                    commands.add("c-shared");
                     break;
+                case Archive:
+                    commands.add("-buildmode");
+                    commands.add("c-archive");
             }
         }
         if (variant.getTags() != null) {
             commands.add("-tags");
             commands.add(String.join(",", variant.getTags()));
+        }
+        if (variant.getFlags() != null) {
+            commands.addAll(variant.getFlags());
         }
         if (variant.isStrip()) {
             commands.add("-ldflags");

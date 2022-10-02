@@ -20,7 +20,7 @@ import static org.apache.tools.ant.taskdefs.condition.Os.*;
 @EqualsAndHashCode
 public class Variant implements Serializable {
     public enum BuildMode {
-        Executable, Library
+        Executable, Shared, Archive
     }
 
     public enum Arch {
@@ -34,6 +34,8 @@ public class Variant implements Serializable {
     private final String name;
 
     @Nullable
+    private String fileName;
+    @Nullable
     private BuildMode buildMode;
     @Nullable
     private Arch arch;
@@ -45,6 +47,8 @@ public class Variant implements Serializable {
     private Cgo cgo;
     @Nullable
     private List<String> tags;
+    @Nullable
+    private List<String> flags;
     private boolean strip;
 
     public Variant(String name) {
@@ -103,7 +107,7 @@ public class Variant implements Serializable {
 
             compilerPath.add(compilerPrefix + minSdk + "-clang");
 
-            return new Cgo(new File(String.join(File.pathSeparator, compilerPath)));
+            return new Cgo(new File(String.join(File.separator, compilerPath)));
         }
     }
 }
