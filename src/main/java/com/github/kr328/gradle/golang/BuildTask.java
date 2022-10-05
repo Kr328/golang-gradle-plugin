@@ -10,6 +10,10 @@ import org.gradle.api.tasks.TaskAction;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +36,14 @@ public abstract class BuildTask extends DefaultTask {
         final File moduleDir = getModuleDirectory().getAsFile().get();
         final File outputDir = getOutputDirectory().getAsFile().get();
         final Variant variant = getVariant().get();
+
+        try (final DirectoryStream<Path> files = Files.newDirectoryStream(outputDir.toPath())) {
+            for (final Path file : files) {
+                Files.delete(file);
+            }
+        } catch (IOException e) {
+            // ignore
+        }
 
         final HashMap<String, String> environment = new HashMap<>(System.getenv());
         if (variant.getOs() != null) {
