@@ -44,11 +44,11 @@ publishing {
             pom {
                 name.set("Golang Gradle")
                 description.set("A gradle plugin for go module building.")
-                url.set("https://github.com/Kr328/GolangGradle")
+                url.set("https://github.com/Kr328/golang-gradle-plugin")
                 licenses {
                     license {
                         name.set("MIT License")
-                        url.set("https://github.com/Kr328/GolangGradle/blob/main/LICENSE")
+                        url.set("https://github.com/Kr328/golang-gradle-plugin/blob/main/LICENSE")
                     }
                 }
                 developers {
@@ -57,8 +57,8 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:https://github.com/Kr328/GolangGradle.git")
-                    url.set("https://github.com/Kr328/GolangGradle")
+                    connection.set("scm:git:https://github.com/Kr328/golang-gradle-plugin.git")
+                    url.set("https://github.com/Kr328/golang-gradle-plugin")
                 }
             }
         }
