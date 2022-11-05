@@ -5,10 +5,10 @@ plugins {
 }
 
 group = "com.github.kr328.gradle.golang"
-version = "2.0.0"
+version = "2.0.1"
 
 dependencies {
-    val agp = "7.3.0"
+    val agp = "7.3.1"
     val lombok = "1.18.24"
 
     annotationProcessor("org.projectlombok:lombok:$lombok")
