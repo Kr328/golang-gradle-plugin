@@ -5,11 +5,11 @@ plugins {
 }
 
 group = "com.github.kr328.gradle.golang"
-version = "2.0.1"
+version = "2.1.0"
 
 dependencies {
-    val agp = "7.3.1"
-    val lombok = "1.18.24"
+    val agp = "7.4.2"
+    val lombok = "1.18.26"
 
     annotationProcessor("org.projectlombok:lombok:$lombok")
 
@@ -30,7 +30,7 @@ gradlePlugin {
             id = project.group.toString()
             displayName = "Golang Gradle"
             description = "A gradle plugin for go module building."
-            implementationClass = "$id.Plugin"
+            implementationClass = "$id.GoPlugin"
         }
     }
 }
