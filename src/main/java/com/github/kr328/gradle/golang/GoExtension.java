@@ -6,14 +6,14 @@ import org.gradle.api.file.DirectoryProperty;
 
 import javax.annotation.Nonnull;
 
-public abstract class Extension {
+public abstract class GoExtension {
     @Nonnull
     public abstract DirectoryProperty getModuleDirectory();
 
     @Nonnull
-    public abstract NamedDomainObjectContainer<Variant> getVariants();
+    public abstract NamedDomainObjectContainer<GoVariant> getVariants();
 
-    public void variants(@Nonnull Action<NamedDomainObjectContainer<Variant>> block) {
+    public void variants(@Nonnull final Action<NamedDomainObjectContainer<GoVariant>> block) {
         block.execute(getVariants());
     }
 }

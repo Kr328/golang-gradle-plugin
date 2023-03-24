@@ -6,20 +6,20 @@ import org.gradle.api.Project;
 import javax.annotation.Nonnull;
 import java.nio.file.Paths;
 
-public class Plugin implements org.gradle.api.Plugin<Project> {
+public class GoPlugin implements org.gradle.api.Plugin<Project> {
     @Nonnull
-    private static String capitalize(@Nonnull String input) {
+    private static String capitalize(@Nonnull final String input) {
         return Character.toUpperCase(input.charAt(0)) + input.substring(1);
     }
 
     @Override
-    public void apply(@Nonnull Project target) {
-        final Extension extension = target.getExtensions().create("golang", Extension.class);
+    public void apply(@Nonnull final Project target) {
+        final GoExtension extension = target.getExtensions().create("golang", GoExtension.class);
 
         extension.getVariants().all(variant -> {
             final String name = "compileGolang" + capitalize(variant.getName());
 
-            target.getTasks().register(name, BuildTask.class, (task) -> {
+            target.getTasks().register(name, GoBuildTask.class, (task) -> {
                 task.getModuleDirectory().set(extension.getModuleDirectory());
                 task.getVariant().set(variant);
                 task.getOutputDirectory().set(
