@@ -47,39 +47,25 @@ public abstract class GoBuildTask extends DefaultTask {
         final HashMap<String, String> environment = new HashMap<>(System.getenv());
 
         switch (variant.getOs()) {
-            case Android:
-                environment.put("GOOS", "android");
-                break;
-            case Windows:
-                environment.put("GOOS", "windows");
-                break;
-            case Linux:
-                environment.put("GOOS", "linux");
-                break;
-            case Darwin:
-                environment.put("GOOS", "darwin");
-                break;
+            case Android -> environment.put("GOOS", "android");
+            case Windows -> environment.put("GOOS", "windows");
+            case Linux -> environment.put("GOOS", "linux");
+            case Darwin -> environment.put("GOOS", "darwin");
         }
 
         switch (variant.getArch()) {
-            case Arm7:
+            case Arm7 -> {
                 environment.put("GOARCH", "arm");
                 environment.put("GOARM", "7");
-                break;
-            case Arm8:
-                environment.put("GOARCH", "arm64");
-                break;
-            case I386:
-                environment.put("GOARCH", "386");
-                break;
-            case Amd64:
-                environment.put("GOARCH", "amd64");
-                break;
+            }
+            case Arm8 -> environment.put("GOARCH", "arm64");
+            case I386 -> environment.put("GOARCH", "386");
+            case Amd64 -> environment.put("GOARCH", "amd64");
         }
 
         if (variant.getCgo() != null) {
             environment.put("CGO_ENABLED", "1");
-            environment.put("CC", variant.getCgo().getCompiler().getPath());
+            environment.put("CC", variant.getCgo().getCompiler());
             environment.put("CFLAGS", "-O3 -Werror");
         } else {
             environment.put("CGO_ENABLED", "0");
@@ -97,22 +83,23 @@ public abstract class GoBuildTask extends DefaultTask {
         );
 
         switch (variant.getBuildMode()) {
-            case Executable:
+            case Executable -> {
                 commands.add("-buildmode");
                 commands.add("exe");
-                break;
-            case PIE:
+            }
+            case PIE -> {
                 commands.add("-buildmode");
                 commands.add("pie");
-            case Shared:
+            }
+            case Shared -> {
                 commands.add("-buildmode");
                 commands.add("c-shared");
-                break;
-            case Archive:
+            }
+            case Archive -> {
                 commands.add("-buildmode");
                 commands.add("c-archive");
-            default:
-                throw new GradleException("Unsupported build mode " + variant.getBuildMode());
+            }
+            default -> throw new GradleException("Unsupported build mode " + variant.getBuildMode());
         }
 
         commands.add("-tags");
@@ -126,18 +113,10 @@ public abstract class GoBuildTask extends DefaultTask {
         while (flagIterator.hasNext()) {
             final String flag = flagIterator.next();
             switch (flag) {
-                case "-asmflags":
-                    asmFlags.add(flagIterator.next());
-                    break;
-                case "-gcflags":
-                    gcFlags.add(flagIterator.next());
-                    break;
-                case "-ldflags":
-                    ldFlags.add(flagIterator.next());
-                    break;
-                default:
-                    commands.add(flag);
-                    break;
+                case "-asmflags" -> asmFlags.add(flagIterator.next());
+                case "-gcflags" -> gcFlags.add(flagIterator.next());
+                case "-ldflags" -> ldFlags.add(flagIterator.next());
+                default -> commands.add(flag);
             }
         }
 
