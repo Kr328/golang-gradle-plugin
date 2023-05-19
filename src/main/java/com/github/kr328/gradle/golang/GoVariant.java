@@ -1,9 +1,7 @@
 package com.github.kr328.gradle.golang;
 
 import com.android.build.gradle.BaseExtension;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.gradle.api.GradleException;
 
 import javax.annotation.Nonnull;
@@ -91,10 +89,14 @@ public class GoVariant implements Serializable {
     @AllArgsConstructor
     public static class Cgo implements Serializable {
         @Nonnull
-        private final String compiler;
+        private final String cc;
 
         @Nonnull
-        public static Cgo fromAndroid(@Nonnull final BaseExtension extension, @Nonnull final Arch arch) {
+        public static Cgo fromAndroid(
+                @Nonnull final BaseExtension extension,
+                @Nonnull final Arch arch,
+                @Nullable final String flags
+        ) {
             final File ndkDir = extension.getNdkDirectory();
             final int minSdk = Optional.ofNullable(extension.getDefaultConfig().getMinSdk())
                     .orElseThrow(() -> new GradleException("minSdk required"));
@@ -124,7 +126,7 @@ public class GoVariant implements Serializable {
 
             compilerPath.add(compilerPrefix + minSdk + "-clang");
 
-            return new Cgo(String.join(File.separator, compilerPath));
+            return new Cgo("\"" +String.join(File.separator, compilerPath) + "\" " + flags);
         }
     }
 }

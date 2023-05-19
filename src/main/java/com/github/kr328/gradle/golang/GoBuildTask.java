@@ -4,7 +4,10 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.TaskAction;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -65,8 +68,7 @@ public abstract class GoBuildTask extends DefaultTask {
 
         if (variant.getCgo() != null) {
             environment.put("CGO_ENABLED", "1");
-            environment.put("CC", variant.getCgo().getCompiler());
-            environment.put("CFLAGS", "-O3 -Werror");
+            environment.put("CC", variant.getCgo().getCc());
         } else {
             environment.put("CGO_ENABLED", "0");
         }
