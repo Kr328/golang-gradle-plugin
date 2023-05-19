@@ -5,10 +5,10 @@ plugins {
 }
 
 group = "com.github.kr328.gradle.golang"
-version = "2.1.0"
+version = "3.0.0"
 
 dependencies {
-    val agp = "7.4.2"
+    val agp = "8.0.1"
     val lombok = "1.18.26"
 
     annotationProcessor("org.projectlombok:lombok:$lombok")
@@ -18,8 +18,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 
     withSourcesJar()
 }

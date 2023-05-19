@@ -1,9 +1,13 @@
 package com.github.kr328.gradle.golang;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
-import org.gradle.api.tasks.*;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
+import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.TaskAction;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -46,40 +50,25 @@ public abstract class GoBuildTask extends DefaultTask {
         final HashMap<String, String> environment = new HashMap<>(System.getenv());
 
         switch (variant.getOs()) {
-            case Android:
-                environment.put("GOOS", "android");
-                break;
-            case Windows:
-                environment.put("GOOS", "windows");
-                break;
-            case Linux:
-                environment.put("GOOS", "linux");
-                break;
-            case Darwin:
-                environment.put("GOOS", "darwin");
-                break;
+            case Android -> environment.put("GOOS", "android");
+            case Windows -> environment.put("GOOS", "windows");
+            case Linux -> environment.put("GOOS", "linux");
+            case Darwin -> environment.put("GOOS", "darwin");
         }
 
         switch (variant.getArch()) {
-            case Arm7:
+            case Arm7 -> {
                 environment.put("GOARCH", "arm");
                 environment.put("GOARM", "7");
-                break;
-            case Arm8:
-                environment.put("GOARCH", "arm64");
-                break;
-            case I386:
-                environment.put("GOARCH", "386");
-                break;
-            case Amd64:
-                environment.put("GOARCH", "amd64");
-                break;
+            }
+            case Arm8 -> environment.put("GOARCH", "arm64");
+            case I386 -> environment.put("GOARCH", "386");
+            case Amd64 -> environment.put("GOARCH", "amd64");
         }
 
         if (variant.getCgo() != null) {
             environment.put("CGO_ENABLED", "1");
-            environment.put("CC", variant.getCgo().getCompiler().getPath());
-            environment.put("CFLAGS", "-O3 -Werror");
+            environment.put("CC", variant.getCgo().getCc());
         } else {
             environment.put("CGO_ENABLED", "0");
         }
@@ -96,17 +85,23 @@ public abstract class GoBuildTask extends DefaultTask {
         );
 
         switch (variant.getBuildMode()) {
-            case Executable:
+            case Executable -> {
                 commands.add("-buildmode");
                 commands.add("exe");
-                break;
-            case Shared:
+            }
+            case PIE -> {
+                commands.add("-buildmode");
+                commands.add("pie");
+            }
+            case Shared -> {
                 commands.add("-buildmode");
                 commands.add("c-shared");
-                break;
-            case Archive:
+            }
+            case Archive -> {
                 commands.add("-buildmode");
                 commands.add("c-archive");
+            }
+            default -> throw new GradleException("Unsupported build mode " + variant.getBuildMode());
         }
 
         commands.add("-tags");
@@ -120,18 +115,10 @@ public abstract class GoBuildTask extends DefaultTask {
         while (flagIterator.hasNext()) {
             final String flag = flagIterator.next();
             switch (flag) {
-                case "-asmflags":
-                    asmFlags.add(flagIterator.next());
-                    break;
-                case "-gcflags":
-                    gcFlags.add(flagIterator.next());
-                    break;
-                case "-ldflags":
-                    ldFlags.add(flagIterator.next());
-                    break;
-                default:
-                    commands.add(flag);
-                    break;
+                case "-asmflags" -> asmFlags.add(flagIterator.next());
+                case "-gcflags" -> gcFlags.add(flagIterator.next());
+                case "-ldflags" -> ldFlags.add(flagIterator.next());
+                default -> commands.add(flag);
             }
         }
 

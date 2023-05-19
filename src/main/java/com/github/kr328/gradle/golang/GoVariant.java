@@ -1,9 +1,7 @@
 package com.github.kr328.gradle.golang;
 
 import com.android.build.gradle.BaseExtension;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.gradle.api.GradleException;
 
 import javax.annotation.Nonnull;
@@ -41,7 +39,7 @@ public class GoVariant implements Serializable {
     }
 
     public enum BuildMode {
-        Executable, Shared, Archive
+        Executable, PIE, Shared, Archive
     }
 
     public enum Arch {
@@ -91,10 +89,14 @@ public class GoVariant implements Serializable {
     @AllArgsConstructor
     public static class Cgo implements Serializable {
         @Nonnull
-        private final File compiler;
+        private final String cc;
 
         @Nonnull
-        public static Cgo fromAndroid(@Nonnull final BaseExtension extension, @Nonnull final Arch arch) {
+        public static Cgo fromAndroid(
+                @Nonnull final BaseExtension extension,
+                @Nonnull final Arch arch,
+                @Nullable final String flags
+        ) {
             final File ndkDir = extension.getNdkDirectory();
             final int minSdk = Optional.ofNullable(extension.getDefaultConfig().getMinSdk())
                     .orElseThrow(() -> new GradleException("minSdk required"));
@@ -107,42 +109,24 @@ public class GoVariant implements Serializable {
             compilerPath.add("prebuilt");
 
             switch (Os.current) {
-                case Windows:
-                    compilerPath.add("windows-x86_64");
-                    break;
-                case Linux:
-                    compilerPath.add("linux-x86_64");
-                    break;
-                case Darwin:
-                    compilerPath.add("darwin-x86_64");
-                    break;
-                default:
-                    throw new GradleException("Unsupported platform: " + Os.current);
+                case Windows -> compilerPath.add("windows-x86_64");
+                case Linux -> compilerPath.add("linux-x86_64");
+                case Darwin -> compilerPath.add("darwin-x86_64");
+                default -> throw new GradleException("Unsupported platform: " + Os.current);
             }
 
             compilerPath.add("bin");
 
-            final String compilerPrefix;
-            switch (arch) {
-                case Arm8:
-                    compilerPrefix = "aarch64-linux-android";
-                    break;
-                case Arm7:
-                    compilerPrefix = "armv7a-linux-androideabi";
-                    break;
-                case I386:
-                    compilerPrefix = "i686-linux-android";
-                    break;
-                case Amd64:
-                    compilerPrefix = "x86_64-linux-android";
-                    break;
-                default:
-                    throw new GradleException("Unsupported abi: " + arch);
-            }
+            final String compilerPrefix = switch (arch) {
+                case Arm8 -> "aarch64-linux-android";
+                case Arm7 -> "armv7a-linux-androideabi";
+                case I386 -> "i686-linux-android";
+                case Amd64 -> "x86_64-linux-android";
+            };
 
             compilerPath.add(compilerPrefix + minSdk + "-clang");
 
-            return new Cgo(new File(String.join(File.separator, compilerPath)));
+            return new Cgo("\"" +String.join(File.separator, compilerPath) + "\" " + flags);
         }
     }
 }
