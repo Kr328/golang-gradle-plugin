@@ -1,6 +1,7 @@
 package com.github.kr328.gradle.golang;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.*;
@@ -100,6 +101,9 @@ public abstract class GoBuildTask extends DefaultTask {
                 commands.add("-buildmode");
                 commands.add("exe");
                 break;
+            case PIE:
+                commands.add("-buildmode");
+                commands.add("pie");
             case Shared:
                 commands.add("-buildmode");
                 commands.add("c-shared");
@@ -107,6 +111,8 @@ public abstract class GoBuildTask extends DefaultTask {
             case Archive:
                 commands.add("-buildmode");
                 commands.add("c-archive");
+            default:
+                throw new GradleException("Unsupported build mode " + variant.getBuildMode());
         }
 
         commands.add("-tags");

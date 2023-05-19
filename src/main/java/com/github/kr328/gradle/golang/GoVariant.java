@@ -41,7 +41,7 @@ public class GoVariant implements Serializable {
     }
 
     public enum BuildMode {
-        Executable, Shared, Archive
+        Executable, PIE, Shared, Archive
     }
 
     public enum Arch {
